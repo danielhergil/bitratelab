@@ -317,10 +317,10 @@ private fun StreamingConfigCard(config: StreamingConfiguration) {
                         text = config.riskLevel.displayName,
                         fontWeight = FontWeight.Medium,
                         color = when (config.riskLevel) {
-                            RiskLevel.LOW -> Color(0xFF4CAF50)
-                            RiskLevel.MEDIUM -> Color(0xFFFF9800)
-                            RiskLevel.HIGH -> Color(0xFFF44336)
-                            RiskLevel.CRITICAL -> Color(0xFF9C27B0)
+                            RiskLevel.LOW -> Color(0xFF4CAF50)      // Success green
+                            RiskLevel.MEDIUM -> Color(0xFFF4A538)   // Yellow Orange
+                            RiskLevel.HIGH -> Color(0xFFF27E2D)     // Warm Orange
+                            RiskLevel.CRITICAL -> Color(0xFFD4472E) // Red Orange
                         }
                     )
                 }
@@ -362,19 +362,25 @@ private fun RiskIcon(riskLevel: RiskLevel, size: androidx.compose.ui.unit.Dp) {
         RiskLevel.LOW -> Icon(
             Icons.Default.CheckCircle,
             contentDescription = null,
-            tint = Color(0xFF4CAF50),
+            tint = Color(0xFF4CAF50),      // Success green
             modifier = Modifier.size(size)
         )
         RiskLevel.MEDIUM -> Icon(
             Icons.Default.Warning,
             contentDescription = null,
-            tint = Color(0xFFFF9800),
+            tint = Color(0xFFF4A538),      // Yellow Orange
             modifier = Modifier.size(size)
         )
-        RiskLevel.HIGH, RiskLevel.CRITICAL -> Icon(
+        RiskLevel.HIGH -> Icon(
+            Icons.Default.Warning,
+            contentDescription = null,
+            tint = Color(0xFFF27E2D),      // Warm Orange
+            modifier = Modifier.size(size)
+        )
+        RiskLevel.CRITICAL -> Icon(
             Icons.Default.Close,
             contentDescription = null,
-            tint = Color(0xFFF44336),
+            tint = Color(0xFFD4472E),      // Red Orange
             modifier = Modifier.size(size)
         )
     }

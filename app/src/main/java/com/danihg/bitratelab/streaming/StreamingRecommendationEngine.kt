@@ -28,10 +28,10 @@ enum class Codec(val displayName: String, val efficiency: Float) {
 }
 
 enum class RiskLevel(val displayName: String, val color: String) {
-    LOW("Recommended", "#4CAF50"),
-    MEDIUM("Medium", "#FF9800"),
-    HIGH("Risky", "#F44336"),
-    CRITICAL("Impossible", "#9C27B0")
+    LOW("Recommended", "#4CAF50"),    // Success green
+    MEDIUM("Medium", "#F4A538"),      // Yellow Orange
+    HIGH("Risky", "#F27E2D"),         // Warm Orange
+    CRITICAL("Impossible", "#D4472E") // Red Orange
 }
 
 class StreamingRecommendationEngine {

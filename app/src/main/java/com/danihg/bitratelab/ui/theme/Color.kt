@@ -2,31 +2,27 @@ package com.danihg.bitratelab.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Primary colors - Modern blue gradient
-val Primary = Color(0xFF2196F3)
-val PrimaryVariant = Color(0xFF1976D2)
-val PrimaryLight = Color(0xFFE3F2FD)
+// Speedometer-inspired color palette
+// Main backgrounds - Dark cool tones
+val DarkBlue = Color(0xFF14233B)      // RGB(20, 35, 59) - Primary background
+val MediumBlue = Color(0xFF1F3D63)    // RGB(31, 61, 99) - Secondary background
+val VioletBlue = Color(0xFF2F4B77)    // RGB(47, 75, 119) - Secondary polygons/details
 
-// Secondary colors - Accent green
-val Secondary = Color(0xFF4CAF50)
-val SecondaryVariant = Color(0xFF388E3C)
-val SecondaryLight = Color(0xFFE8F5E8)
+// Active/Highlight elements - Warm tones
+val WarmOrange = Color(0xFFF27E2D)    // RGB(242, 126, 45) - Primary active/highlight
+val YellowOrange = Color(0xFFF4A538)  // RGB(244, 165, 56) - Secondary active/highlight
+
+// Alerts/Attention elements
+val RedOrange = Color(0xFFD4472E)     // RGB(212, 71, 46) - Alerts/critical attention
 
 // Status colors
-val Success = Color(0xFF4CAF50)
-val Warning = Color(0xFFFF9800)
-val Error = Color(0xFFF44336)
-val Info = Color(0xFF2196F3)
+val Success = Color(0xFF4CAF50)       // Keep green for success
+val Warning = Color(0xFFF4A538)       // Yellow Orange for warnings
+val Error = Color(0xFFD4472E)         // Red Orange for errors
 
-// Neutral colors
-val Surface = Color(0xFFFFFFFF)
-val Background = Color(0xFFFAFAFA)
-val OnSurface = Color(0xFF1C1C1E)
-val OnBackground = Color(0xFF1C1C1E)
-val OnPrimary = Color(0xFFFFFFFF)
-
-// Dark theme colors
-val DarkSurface = Color(0xFF121212)
-val DarkBackground = Color(0xFF000000)
-val DarkOnSurface = Color(0xFFE1E1E1)
-val DarkOnBackground = Color(0xFFE1E1E1)
+// Surface and text colors
+val Surface = Color(0xFF1F3D63)       // Medium Blue for cards/surfaces
+val Background = Color(0xFF14233B)    // Dark Blue for main background
+val OnSurface = Color(0xFFE8EEF5)     // Light text on dark surfaces
+val OnBackground = Color(0xFFE8EEF5)  // Light text on dark background
+val OnPrimary = Color(0xFFFFFFFF)     // White text on primary (orange) buttons

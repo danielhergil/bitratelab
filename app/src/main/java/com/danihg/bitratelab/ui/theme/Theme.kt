@@ -11,52 +11,68 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Primary,
-    secondary = Secondary,
-    tertiary = SecondaryVariant,
-    background = DarkBackground,
-    surface = DarkSurface,
+// Speedometer-inspired dark theme (primary theme)
+private val SpeedometerColorScheme = darkColorScheme(
+    // Primary colors - Warm Orange for buttons and active elements
+    primary = WarmOrange,
     onPrimary = OnPrimary,
-    onSecondary = OnPrimary,
-    onBackground = DarkOnBackground,
-    onSurface = DarkOnSurface,
-    error = Error,
-    errorContainer = Error,
-    onError = OnPrimary
+    primaryContainer = VioletBlue,
+    onPrimaryContainer = YellowOrange,
+
+    // Secondary colors - Yellow Orange for secondary actions
+    secondary = YellowOrange,
+    onSecondary = DarkBlue,
+    secondaryContainer = VioletBlue,
+    onSecondaryContainer = YellowOrange,
+
+    // Tertiary - Violet Blue for accents
+    tertiary = VioletBlue,
+    onTertiary = OnSurface,
+
+    // Background and Surface - Dark cool tones
+    background = Background,        // Dark Blue
+    onBackground = OnBackground,    // Light text
+    surface = Surface,              // Medium Blue for cards
+    onSurface = OnSurface,          // Light text
+    surfaceVariant = VioletBlue,
+    onSurfaceVariant = OnSurface,
+
+    // Error colors - Red Orange
+    error = Error,                  // Red Orange
+    onError = OnPrimary,
+    errorContainer = RedOrange,
+    onErrorContainer = OnPrimary,
+
+    // Outline and other colors
+    outline = VioletBlue,
+    outlineVariant = MediumBlue
 )
 
+// Keep a light scheme as fallback (though we'll force dark theme)
 private val LightColorScheme = lightColorScheme(
-    primary = Primary,
-    secondary = Secondary,
-    tertiary = SecondaryVariant,
+    primary = WarmOrange,
+    secondary = YellowOrange,
+    tertiary = VioletBlue,
     background = Background,
     surface = Surface,
     onPrimary = OnPrimary,
-    onSecondary = OnPrimary,
+    onSecondary = DarkBlue,
     onBackground = OnBackground,
     onSurface = OnSurface,
     error = Error,
-    errorContainer = Error,
+    errorContainer = RedOrange,
     onError = OnPrimary
 )
 
 @Composable
 fun BitrateLabTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    darkTheme: Boolean = true,  // Always use dark theme for speedometer look
+    // Disable dynamic color to always use our custom speedometer palette
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+    // Always use the Speedometer color scheme
+    val colorScheme = SpeedometerColorScheme
 
     MaterialTheme(
         colorScheme = colorScheme,

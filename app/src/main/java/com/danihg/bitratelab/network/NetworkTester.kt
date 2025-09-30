@@ -124,7 +124,19 @@ class NetworkTester(private val context: Context) {
         val packetLoss = measurePacketLoss()
 
         val speedVariation = ((maxSpeed - minSpeed) / avgSpeed) * 100
-        val isStable = stabilityScore > 0.7 && !hasSpikes && speedVariation < 30
+
+        // More realistic stability check based on multiple factors
+        // Connection is stable if:
+        // - Stability score is reasonable (> 0.5)
+        // - Not too many spikes (< 3)
+        // - Speed variation is acceptable (< 100%)
+        // - Low jitter (< 50ms)
+        // - Low packet loss (< 2%)
+        val isStable = stabilityScore > 0.5 &&
+                      spikeCount < 3 &&
+                      speedVariation < 100 &&
+                      jitter < 50.0 &&
+                      packetLoss < 2.0
 
         val connectionReport = ConnectionReport(
             testDurationSeconds = ((System.currentTimeMillis() - startTime) / 1000).toInt(),
@@ -432,12 +444,13 @@ class NetworkTester(private val context: Context) {
 
     private fun getStabilityDescription(stabilityScore: Double, hasSpikes: Boolean, spikeCount: Int): String {
         return when {
-            stabilityScore > 0.9 && !hasSpikes -> "Excellent - Very stable connection with consistent performance"
-            stabilityScore > 0.8 && spikeCount <= 1 -> "Good - Stable connection with minimal fluctuations"
-            stabilityScore > 0.7 && spikeCount <= 2 -> "Fair - Generally stable with occasional variations"
-            stabilityScore > 0.5 -> "Poor - Unstable connection with frequent speed variations"
-            hasSpikes && spikeCount > 3 -> "Very Poor - Highly unstable with multiple connection spikes detected"
-            else -> "Critical - Severely unstable connection not suitable for streaming"
+            stabilityScore > 0.85 && !hasSpikes -> "Excellent - Very stable connection with consistent performance"
+            stabilityScore > 0.75 && spikeCount <= 1 -> "Very Good - Stable connection with minimal fluctuations"
+            stabilityScore > 0.65 && spikeCount <= 2 -> "Good - Generally stable with occasional variations"
+            stabilityScore > 0.50 && spikeCount <= 3 -> "Fair - Acceptable stability for most streaming scenarios"
+            stabilityScore > 0.35 -> "Moderate - Some instability, suitable for lower quality streams"
+            hasSpikes && spikeCount > 5 -> "Poor - Unstable with multiple connection spikes detected"
+            else -> "Critical - Highly unstable connection not recommended for streaming"
         }
     }
 
@@ -465,6 +478,19 @@ class NetworkTester(private val context: Context) {
     }
 
     private fun isConnectionStable(downloadSpeed: Double, jitter: Double, packetLoss: Double): Boolean {
-        return downloadSpeed > 1.0 && jitter < 50.0 && packetLoss < 5.0
+        // Based on streaming criteria:
+        // - Jitter should be < 30ms for good quality (but < 50ms is still acceptable)
+        // - Packet loss should be < 1% for good quality (< 2% is risky but possible)
+        // - Download speed should be reasonable for any streaming
+
+        // Count quality issues
+        var issues = 0
+
+        if (jitter >= 30.0) issues++           // Jitter in risky range
+        if (packetLoss >= 1.0) issues++        // Packet loss in risky range
+        if (downloadSpeed < 5.0) issues++      // Very low speed
+
+        // Connection is stable if it has 0 or 1 issue (not 2+)
+        return issues <= 1
     }
 }

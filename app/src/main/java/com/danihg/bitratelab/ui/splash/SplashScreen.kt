@@ -2,6 +2,7 @@ package com.danihg.bitratelab.ui.splash
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -12,10 +13,12 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.danihg.bitratelab.R
 import kotlinx.coroutines.delay
 
 @Composable
@@ -41,44 +44,29 @@ fun SplashScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.secondary
-                    )
-                )
-            ),
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // App Icon/Logo placeholder
-            Box(
+            // BitrateLab Logo
+            Image(
+                painter = painterResource(id = R.drawable.logo_bitratelab),
+                contentDescription = "BitrateLab Logo",
                 modifier = Modifier
-                    .size(120.dp)
+                    .size(180.dp)
                     .scale(scale.value)
-                    .background(
-                        Color.White.copy(alpha = 0.2f),
-                        shape = MaterialTheme.shapes.large
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "📊",
-                    fontSize = 48.sp
-                )
-            }
+            )
 
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
                 text = "BitrateLab",
-                fontSize = 32.sp,
+                fontSize = 36.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.alpha(alpha.value)
             )
 
@@ -86,8 +74,8 @@ fun SplashScreen(
 
             Text(
                 text = "Optimize your streaming quality",
-                fontSize = 16.sp,
-                color = Color.White.copy(alpha = 0.8f),
+                fontSize = 18.sp,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.alpha(alpha.value)
             )
@@ -96,9 +84,9 @@ fun SplashScreen(
 
             CircularProgressIndicator(
                 modifier = Modifier
-                    .size(32.dp)
+                    .size(36.dp)
                     .alpha(alpha.value),
-                color = Color.White,
+                color = MaterialTheme.colorScheme.primary,
                 strokeWidth = 3.dp
             )
         }
