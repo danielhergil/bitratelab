@@ -1,0 +1,72 @@
+Te dejo un marco claro de decisión para clasificar perfiles de streaming (pensado para directo: lo crítico es la subida). Sirve para OBS/RTMP/SRT, con márgenes para picos, overhead y recuperación.
+
+1) Métricas que vas a mirar
+
+Subida sostenida (Mbps): lo que mantiene tu línea el 95% del tiempo.
+
+Pérdida de paquetes: media en %.
+
+Jitter (variación de latencia): en ms.
+
+Latencia bajo carga (bufferbloat): aumento del RTT al saturar la subida.
+
+Umbrales de calidad (aplican a cualquier resolución)
+Criterio	Recomendado	Medium	Risky	Impossible
+Subida disponible vs bitrate	≥ 2.0×	1.5–1.99×	1.2–1.49×	<1.2×
+Pérdida	< 0.2%	0.2–1%	1–2%	>2%
+Jitter	< 15 ms	15–30 ms	30–50 ms	>50 ms
+Bufferbloat (Δ RTT)	< 50 ms	50–150 ms	150–300 ms	>300 ms
+
+Ej.: si tu escena necesita 8 Mbps de vídeo y mides 16 Mbps sostenidos, tienes 2× → “Recomendado” (si los demás criterios también encajan).
+
+2) Bitrates de referencia por configuración
+
+Valores típicos de video (audio aparte ~0.16 Mbps). Dos columnas: H.264/AVC (lo más común) y HEVC/AV1 (más eficiente). Usa CBR o CBR+freno.
+
+Perfil	H.264 (Mbps)	HEVC/AV1 (Mbps)
+4K 60 fps	20–25	12–16
+4K 30 fps	14–18	8–12
+1440p 60 fps	12–16	8–10
+1440p 30 fps	8–12	6–8
+1080p 60 fps	8–10	5–7
+1080p 30 fps	6–8	3.5–5
+720p 60 fps	5–6.5	3–4.5
+720p 30 fps	3.5–5	2.5–3.5
+480p 60 fps	2.5–3.5	1.8–2.5
+480p 30 fps	1.8–2.5	1.2–1.8
+420p 30 fps	1.2–1.8	0.8–1.2
+
+Suma +0.16 Mbps de audio al total.
+Si usas B-frames y buena preconfiguración, tiende al límite inferior del rango; escenas rápidas (juegos FPS/deportes), al superior.
+
+3) Cómo clasificar (paso a paso)
+
+Elige el bitrate de la tabla según tu códec.
+
+Calcula el headroom: subida_sostenida / (bitrate_video + 0.16).
+
+Asigna etiqueta usando la fila de “Subida vs bitrate”.
+
+Rebaja una categoría si dos de estas fallan: pérdida, jitter, bufferbloat.
+
+Si “Impossible”, baja resolución o fps hasta que al menos sea “Risky/Medium”.
+
+4) Tabla rápida de decisión (H.264, incluye audio)
+
+Usando el tope del rango para ser conservador:
+
+Perfil (H.264)	Total aprox. (Mbps)	Recomendado ≥	Medium ≥	Risky ≥	Impossible <
+4K60	25.2	50	38	30	30
+4K30	18.2	36	27	22	22
+1440p60	16.2	32	24	19	19
+1440p30	12.2	24	18	15	15
+1080p60	10.2	20	15	12	12
+1080p30	8.2	16	12	10	10
+720p60	6.7	13.4	10	8	8
+720p30	5.2	10.4	7.8	6.2	6.2
+480p60	3.7	7.4	5.6	4.4	4.4
+480p30	2.7	5.4	4.0	3.2	3.2
+420p30	1.96	3.9	2.9	2.4	2.4
+
+“Recomendado ≥” es 2×; “Medium ≥” es 1.5×; “Risky ≥” es 1.2×.
+Ej.: con 12 Mbps de subida estable y buenos valores de red → 1080p60 sale “Medium” (necesita 15 para Recomendado).

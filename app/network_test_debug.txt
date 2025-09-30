@@ -1,0 +1,153 @@
+
+========== TEST RUN: 2025-09-30 21:55:48 ==========
+Connection Type: WIFI
+
+--- FINAL RESULTS ---
+Download Speed: 210,46 Mbps
+Upload Speed: 24,62 Mbps
+Latency: 304 ms
+Jitter: 73,74 ms
+Packet Loss: 0,00%
+Is Stable: false
+
+--- CONNECTION REPORT ---
+Test Duration: 23 seconds
+Average Speed: 210,46 Mbps
+Min Speed: 108,40 Mbps
+Max Speed: 268,46 Mbps
+Speed Variation: 76,05%
+Stability Score: 0,740
+Has Spikes: true
+Spike Count: 1
+Stability: Fair - Generally stable with occasional variations
+
+--- SPEED MEASUREMENTS (10 samples) ---
+Sample 1: 108,40 Mbps
+Sample 2: 246,91 Mbps
+Sample 3: 162,93 Mbps
+Sample 4: 235,99 Mbps
+Sample 5: 232,56 Mbps
+Sample 6: 188,68 Mbps
+Sample 7: 250,78 Mbps
+Sample 8: 221,61 Mbps
+Sample 9: 268,46 Mbps
+Sample 10: 188,24 Mbps
+
+--- LATENCY MEASUREMENTS (10 samples) ---
+Sample 1: 485 ms
+Sample 2: 334 ms
+Sample 3: 282 ms
+Sample 4: 273 ms
+Sample 5: 311 ms
+Sample 6: 277 ms
+Sample 7: 246 ms
+Sample 8: 234 ms
+Sample 9: 231 ms
+Sample 10: 374 ms
+
+--- FILE LOCATION ---
+Debug file saved to: /storage/emulated/0/Android/data/com.danihg.bitratelab/files/network_test_debug.txt
+===============================================
+
+
+========== TEST RUN: 2025-09-30 22:00:34 ==========
+Connection Type: WIFI
+
+--- FINAL RESULTS ---
+Download Speed: 342,44 Mbps
+Upload Speed: 63,24 Mbps
+Latency: 145 ms
+Jitter: 74,00 ms
+Packet Loss: 0,00%
+Is Stable: false
+
+--- CONNECTION REPORT ---
+Test Duration: 25 seconds
+Average Speed: 342,44 Mbps
+Min Speed: 183,74 Mbps
+Max Speed: 469,48 Mbps
+Speed Variation: 83,44%
+Stability Score: 0,734
+Has Spikes: false
+Spike Count: 0
+Stability: Fair - Generally stable with occasional variations
+
+--- SPEED MEASUREMENTS (10 samples) ---
+Sample 1: 190,11 Mbps
+Sample 2: 355,56 Mbps
+Sample 3: 404,86 Mbps
+Sample 4: 469,48 Mbps
+Sample 5: 327,06 Mbps
+Sample 6: 261,78 Mbps
+Sample 7: 183,74 Mbps
+Sample 8: 354,92 Mbps
+Sample 9: 419,73 Mbps
+Sample 10: 457,14 Mbps
+
+--- LATENCY MEASUREMENTS (10 samples) ---
+Sample 1: 357 ms
+Sample 2: 120 ms
+Sample 3: 104 ms
+Sample 4: 93 ms
+Sample 5: 133 ms
+Sample 6: 179 ms
+Sample 7: 108 ms
+Sample 8: 125 ms
+Sample 9: 128 ms
+Sample 10: 107 ms
+
+--- FILE LOCATION ---
+Debug file saved to: /storage/emulated/0/Android/data/com.danihg.bitratelab/files/network_test_debug.txt
+===============================================
+
+
+========== TEST RUN: 2025-09-30 22:07:49 ==========
+Connection Type: WIFI
+
+--- FINAL RESULTS ---
+Download Speed: 293,82 Mbps
+Upload Speed: 80,89 Mbps
+Latency: 50 ms
+Jitter: 46,84 ms
+Packet Loss: 0,00%
+Is Stable: false
+
+--- CONNECTION REPORT ---
+Test Duration: 28 seconds
+Average Speed: 293,82 Mbps
+Min Speed: 97,09 Mbps
+Max Speed: 530,50 Mbps
+Speed Variation: 147,51%
+Stability Score: 0,545
+Has Spikes: false
+Spike Count: 0
+Stability: Poor - Unstable connection with frequent speed variations
+
+--- SPEED MEASUREMENTS (10 samples) ---
+Sample 1: 431,03 Mbps
+Sample 2: 407,75 Mbps
+Sample 3: 530,50 Mbps
+Sample 4: 324,15 Mbps
+Sample 5: 168,92 Mbps
+Sample 6: 97,09 Mbps
+Sample 7: 236,69 Mbps
+Sample 8: 273,79 Mbps
+Sample 9: 318,98 Mbps
+Sample 10: 149,31 Mbps
+
+--- LATENCY MEASUREMENTS (10 samples) ---
+Sample 1: 15 ms
+Sample 2: 41 ms
+Sample 3: 28 ms
+Sample 4: 16 ms
+Sample 5: 176 ms
+Sample 6: 20 ms
+Sample 7: 45 ms
+Sample 8: 17 ms
+Sample 9: 72 ms
+Sample 10: 75 ms
+
+--- FILE LOCATION ---
+Debug file saved to: /storage/emulated/0/Android/data/com.danihg.bitratelab/files/network_test_debug.txt
+===============================================
+
