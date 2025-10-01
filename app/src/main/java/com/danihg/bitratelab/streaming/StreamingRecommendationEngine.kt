@@ -14,6 +14,7 @@ data class StreamingConfiguration(
 )
 
 enum class Resolution(val width: Int, val height: Int, val displayName: String) {
+    R_360P(640, 360, "360p"),
     R_480P(854, 480, "480p"),
     R_720P(1280, 720, "720p"),
     R_1080P(1920, 1080, "1080p"),
@@ -48,30 +49,29 @@ class StreamingRecommendationEngine {
                     val realisticBitrate = calculateRealisticBitrate(resolution, fps, codec)
                     val requiredBandwidthMbps = (realisticBitrate / 1000.0) * 1.3 // Add 30% buffer for stable streaming
 
-                    // Only include configurations that could potentially work
-                    if (requiredBandwidthMbps <= availableBandwidthMbps * 2.0) { // Allow even challenging configs
-                        val riskLevel = calculateRealisticRiskLevel(
-                            realisticBitrate,
-                            availableBandwidthMbps,
-                            networkResult,
-                            stabilityMultiplier
-                        )
+                    // Always generate all configurations, let risk level indicate viability
+                    // This ensures users always see options even with very low bandwidth
+                    val riskLevel = calculateRealisticRiskLevel(
+                        realisticBitrate,
+                        availableBandwidthMbps,
+                        networkResult,
+                        stabilityMultiplier
+                    )
 
-                        val quality = determineQuality(riskLevel, networkResult.isStable)
-                        val description = generateDescription(resolution, fps, codec, riskLevel)
+                    val quality = determineQuality(riskLevel, networkResult.isStable)
+                    val description = generateDescription(resolution, fps, codec, riskLevel)
 
-                        configurations.add(
-                            StreamingConfiguration(
-                                resolution = resolution,
-                                fps = fps,
-                                bitrate = realisticBitrate,
-                                codec = codec,
-                                quality = quality,
-                                riskLevel = riskLevel,
-                                description = description
-                            )
+                    configurations.add(
+                        StreamingConfiguration(
+                            resolution = resolution,
+                            fps = fps,
+                            bitrate = realisticBitrate,
+                            codec = codec,
+                            quality = quality,
+                            riskLevel = riskLevel,
+                            description = description
                         )
-                    }
+                    )
                 }
             }
         }
@@ -84,13 +84,19 @@ class StreamingRecommendationEngine {
     }
 
     private fun calculateRealisticBitrate(resolution: Resolution, fps: Int, codec: Codec): Int {
-        // Real-world streaming bitrates in kbps based on criteria (using upper range for conservative estimates)
+        // Real-world streaming bitrates in kbps based on criteria
+        // Using lower ranges for better compatibility with low bandwidth connections
         // These are VIDEO bitrates - audio (160 kbps) will be added separately
         val baseBitrate = when (resolution) {
+            Resolution.R_360P -> when (fps) {
+                30 -> 600    // 0.6 Mbps for 360p30 (very low bandwidth streaming)
+                60 -> 1000   // 1.0 Mbps for 360p60
+                else -> 600
+            }
             Resolution.R_480P -> when (fps) {
-                30 -> 2500   // 2.5 Mbps for 480p30 (H.264 upper range)
-                60 -> 3500   // 3.5 Mbps for 480p60
-                else -> 2500
+                30 -> 1200   // 1.2 Mbps for 480p30 (lower range, works on slower connections)
+                60 -> 2000   // 2.0 Mbps for 480p60
+                else -> 1200
             }
             Resolution.R_720P -> when (fps) {
                 30 -> 5000   // 5 Mbps for 720p30
@@ -147,8 +153,9 @@ class StreamingRecommendationEngine {
         var baseLevel = when {
             headroomRatio >= 2.0 -> RiskLevel.LOW           // Recommended (≥2.0x)
             headroomRatio >= 1.5 -> RiskLevel.MEDIUM        // Medium (1.5-1.99x)
-            headroomRatio >= 1.2 -> RiskLevel.HIGH          // Risky (1.2-1.49x)
-            else -> RiskLevel.CRITICAL                       // Impossible (<1.2x)
+            headroomRatio >= 1.0 -> RiskLevel.HIGH          // Risky (1.0-1.49x) - at least meets minimum
+            headroomRatio >= 0.5 -> RiskLevel.CRITICAL      // Very difficult (0.5-0.99x) - needs encoder tweaking
+            else -> RiskLevel.CRITICAL                       // Nearly impossible (<0.5x)
         }
 
         // Count network quality failures based on criteria
@@ -219,7 +226,7 @@ class StreamingRecommendationEngine {
             RiskLevel.LOW -> "Recommended - 2x headroom, smooth streaming with buffer for spikes"
             RiskLevel.MEDIUM -> "Acceptable - 1.5x headroom, may struggle with network fluctuations"
             RiskLevel.HIGH -> "Risky - 1.2x headroom, frequent buffering likely during drops"
-            RiskLevel.CRITICAL -> "Impossible - insufficient upload bandwidth"
+            RiskLevel.CRITICAL -> "Not recommended - insufficient upload bandwidth at standard bitrate, consider reducing encoder bitrate manually"
         }
 
         return "$baseDesc - $riskDesc"

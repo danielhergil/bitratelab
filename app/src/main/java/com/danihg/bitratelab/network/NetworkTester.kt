@@ -5,6 +5,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.MediaType.Companion.toMediaType
@@ -83,17 +84,21 @@ class NetworkTester(private val context: Context) {
 
             progressCallback(currentProgress, "Measuring speed and latency... (${i + 1}/20)")
 
-            // Measure speed (smaller file for frequent testing)
-            val speed = measureDownloadSpeedQuick()
+            // Measure speed with timeout (max 3 seconds per measurement)
+            val speed = withTimeoutOrNull(3000L) {
+                measureDownloadSpeedQuick()
+            } ?: 0.0
             speedMeasurements.add(SpeedMeasurement(measurementStart, speed))
 
-            // Measure latency
-            val latency = measureLatencyQuick()
+            // Measure latency with timeout (max 1.5 seconds per measurement)
+            val latency = withTimeoutOrNull(1500L) {
+                measureLatencyQuick()
+            } ?: 1000L
             latencyMeasurements.add(LatencyMeasurement(measurementStart, latency))
 
             currentProgress += progressIncrement
 
-            // Wait for next measurement interval
+            // Always maintain 2 second interval between measurements
             val elapsed = System.currentTimeMillis() - measurementStart
             val waitTime = testIntervalMs - elapsed
             if (waitTime > 0) {
@@ -104,9 +109,23 @@ class NetworkTester(private val context: Context) {
         progressCallback(85, "Analyzing connection stability...")
 
         // Calculate comprehensive metrics
-        val avgSpeed = speedMeasurements.map { it.speed }.average()
-        val minSpeed = speedMeasurements.minOf { it.speed }
-        val maxSpeed = speedMeasurements.maxOf { it.speed }
+        // Filter out failed measurements (0.0 speed) for more accurate statistics
+        val validSpeedMeasurements = speedMeasurements.filter { it.speed > 0.0 }
+        val avgSpeed = if (validSpeedMeasurements.isNotEmpty()) {
+            validSpeedMeasurements.map { it.speed }.average()
+        } else {
+            0.1 // Minimum threshold to avoid division by zero
+        }
+        val minSpeed = if (validSpeedMeasurements.isNotEmpty()) {
+            validSpeedMeasurements.minOf { it.speed }
+        } else {
+            avgSpeed
+        }
+        val maxSpeed = if (validSpeedMeasurements.isNotEmpty()) {
+            validSpeedMeasurements.maxOf { it.speed }
+        } else {
+            avgSpeed
+        }
         val avgLatency = latencyMeasurements.map { it.latency }.average().toLong()
 
         // Calculate jitter from latency measurements
@@ -118,12 +137,21 @@ class NetworkTester(private val context: Context) {
         val stabilityDescription = getStabilityDescription(stabilityScore, hasSpikes, spikeCount)
 
         progressCallback(90, "Measuring upload speed...")
-        val uploadSpeed = measureUploadSpeed(avgSpeed)
+        val uploadSpeed = withTimeoutOrNull(5000L) {
+            measureUploadSpeed(avgSpeed)
+        } ?: (avgSpeed * 0.2)
 
         progressCallback(95, "Calculating packet loss...")
-        val packetLoss = measurePacketLoss()
+        val packetLoss = withTimeoutOrNull(5000L) {
+            measurePacketLoss()
+        } ?: 0.0
 
-        val speedVariation = ((maxSpeed - minSpeed) / avgSpeed) * 100
+        // Calculate speed variation with safe guards
+        val speedVariation = if (avgSpeed > 0) {
+            ((maxSpeed - minSpeed) / avgSpeed) * 100
+        } else {
+            0.0
+        }
 
         // More realistic stability check based on multiple factors
         // Connection is stable if:
@@ -266,9 +294,9 @@ class NetworkTester(private val context: Context) {
 
     private suspend fun measureDownloadSpeedQuick(): Double = withContext(Dispatchers.IO) {
         try {
-            // Use 50MB file for accurate measurements on fast connections
-            // This ensures test takes at least 0.8 seconds even on 500 Mbps connection
-            val testUrl = "https://speed.cloudflare.com/__down?bytes=50000000" // 50MB test file
+            // Use 5MB file for quick measurements that complete within timeout
+            // This allows measuring even slow connections while still accurate for fast ones
+            val testUrl = "https://speed.cloudflare.com/__down?bytes=5000000" // 5MB test file
             val request = Request.Builder().url(testUrl).build()
 
             var totalBytes = 0L
@@ -344,11 +372,11 @@ class NetworkTester(private val context: Context) {
 
     private suspend fun measureUploadSpeed(avgDownloadSpeed: Double): Double = withContext(Dispatchers.IO) {
         try {
-            // Perform actual upload test with 10MB of data
+            // Perform actual upload test with 2MB of data
             val testUrl = "https://speed.cloudflare.com/__up"
 
-            // Create 10MB of data to upload (ensures accurate measurement on fast connections)
-            val uploadData = ByteArray(10000000) { (it % 256).toByte() }
+            // Create 2MB of data to upload (completes within timeout on slow connections)
+            val uploadData = ByteArray(2000000) { (it % 256).toByte() }
 
             val mediaType = "application/octet-stream".toMediaType()
             val requestBody = uploadData.toRequestBody(mediaType)
