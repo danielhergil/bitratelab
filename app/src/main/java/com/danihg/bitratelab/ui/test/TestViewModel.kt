@@ -18,7 +18,9 @@ data class TestUiState(
     val currentTestStep: String = "",
     val testResult: NetworkTestResult? = null,
     val recommendations: List<StreamingConfiguration> = emptyList(),
-    val error: String? = null
+    val error: String? = null,
+    val shouldShowInterstitial: Boolean = false,
+    val readyToNavigate: Boolean = false
 )
 
 class TestViewModel(application: Application) : AndroidViewModel(application) {
@@ -48,12 +50,15 @@ class TestViewModel(application: Application) : AndroidViewModel(application) {
                 updateProgress(100, "Analysis complete!")
                 kotlinx.coroutines.delay(500)
 
+                // Signal to show interstitial ad before navigating
                 _uiState.value = TestUiState(
                     isLoading = false,
                     testProgress = 100,
                     currentTestStep = "Test completed successfully",
                     testResult = testResult,
-                    recommendations = recommendations
+                    recommendations = recommendations,
+                    shouldShowInterstitial = true,
+                    readyToNavigate = false
                 )
 
             } catch (e: Exception) {
@@ -78,5 +83,16 @@ class TestViewModel(application: Application) : AndroidViewModel(application) {
 
     fun resetTest() {
         _uiState.value = TestUiState()
+    }
+
+    fun onInterstitialDismissed() {
+        _uiState.value = _uiState.value.copy(
+            shouldShowInterstitial = false,
+            readyToNavigate = true
+        )
+    }
+
+    fun onNavigationComplete() {
+        _uiState.value = _uiState.value.copy(readyToNavigate = false)
     }
 }

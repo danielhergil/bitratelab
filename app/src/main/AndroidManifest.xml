@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- +++ Añade esto para anuncios (Android 13+) -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+    <!-- (ya tienes) -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -14,17 +17,21 @@
         android:roundIcon="@drawable/logo_bitratelab"
         android:supportsRtl="true"
         android:theme="@style/Theme.BitrateLab">
+
+        <!-- +++ App ID de AdMob (usa el de prueba mientras tanto) -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3125779407094460~3458007315" />
+        <!-- Cambia por tu App ID real cuando lo tengas -->
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.BitrateLab">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

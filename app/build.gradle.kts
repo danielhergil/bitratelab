@@ -56,6 +56,10 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.lottie.compose)
+
+    implementation("com.google.android.gms:play-services-ads:24.6.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

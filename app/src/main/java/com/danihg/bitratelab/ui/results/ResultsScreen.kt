@@ -30,6 +30,7 @@ import com.danihg.bitratelab.ui.test.TestViewModel
 import com.danihg.bitratelab.ui.theme.Success
 import com.danihg.bitratelab.ui.theme.Warning
 import com.danihg.bitratelab.ui.theme.Error
+import com.danihg.bitratelab.ui.components.NativeAdCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,9 +93,17 @@ fun ResultsScreen(
                 RiskLegend()
             }
 
-            // Streaming Configuration Cards
-            items(uiState.recommendations) { config ->
+            // Streaming Configuration Cards with Native Ads interspersed
+            items(uiState.recommendations.size) { index ->
+                val config = uiState.recommendations[index]
+
                 StreamingConfigCard(config)
+
+                // Insert native ad after every 3rd configuration (index 2, 5, 8, etc.)
+                if ((index + 1) % 3 == 0 && index < uiState.recommendations.size - 1) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    NativeAdCard()
+                }
             }
 
             item {

@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -65,7 +66,9 @@ fun BitrateLabApp() {
         }
 
         composable(Screen.Results.route) {
-            val parentEntry = navController.getBackStackEntry(Screen.Test.route)
+            val parentEntry = remember(navController) {
+                navController.getBackStackEntry(Screen.Test.route)
+            }
             val viewModel: TestViewModel = viewModel(parentEntry)
             ResultsScreen(
                 viewModel = viewModel,

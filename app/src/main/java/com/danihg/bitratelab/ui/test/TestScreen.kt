@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -23,6 +24,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.danihg.bitratelab.network.ConnectionType
 import com.danihg.bitratelab.network.NetworkTestResult
+import com.danihg.bitratelab.ui.components.InterstitialAdManager
+import android.app.Activity
 
 @Composable
 fun TestScreen(
@@ -30,10 +33,33 @@ fun TestScreen(
     onNavigateToResults: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val activity = context as? Activity
 
-    LaunchedEffect(uiState.testResult) {
-        if (uiState.testResult != null && !uiState.isLoading) {
+    // Create and remember the interstitial ad manager
+    val interstitialAdManager = remember {
+        InterstitialAdManager(context)
+    }
+
+    // Preload interstitial ad when screen loads
+    LaunchedEffect(Unit) {
+        interstitialAdManager.loadAd()
+    }
+
+    // Handle interstitial ad display after test completes
+    LaunchedEffect(uiState.shouldShowInterstitial) {
+        if (uiState.shouldShowInterstitial && activity != null) {
+            interstitialAdManager.showAd(activity) {
+                viewModel.onInterstitialDismissed()
+            }
+        }
+    }
+
+    // Navigate to results after interstitial is dismissed
+    LaunchedEffect(uiState.readyToNavigate) {
+        if (uiState.readyToNavigate) {
             onNavigateToResults()
+            viewModel.onNavigationComplete()
         }
     }
 
